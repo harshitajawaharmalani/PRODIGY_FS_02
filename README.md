@@ -34,4 +34,4 @@ An industry-standard web application designed for administrators to manage emplo
 4. **Run:** Start both servers using `npm run dev`.
 
 ---
-*Developed by Harshita as part of the Web Development Internship Task.*
+*Developed by Harshita as part of the Full-Stack Web Development Internship Task.*
