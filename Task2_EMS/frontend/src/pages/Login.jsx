@@ -8,11 +8,7 @@ const Login = ({ setIsAuthenticated, isAuthenticated }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
+  
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,8 +18,14 @@ const Login = ({ setIsAuthenticated, isAuthenticated }) => {
       
       if (data.success) {
        
-        setIsAuthenticated(true); 
-        navigate('/dashboard');
+        setIsAuthenticated(data.user.role); 
+        const userRole = data.user.role; 
+
+        if (data.user.role === 'admin') {
+          navigate('/dashboard');
+        } else {
+          navigate('/home');
+        }
       }
     } catch (err) {
       alert(err.response?.data?.message || "Login Failed. Please check your credentials.");

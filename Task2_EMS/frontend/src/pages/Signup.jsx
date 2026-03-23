@@ -7,7 +7,8 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'user'
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -79,6 +80,18 @@ const Signup = () => {
               placeholder="••••••••" 
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" 
             />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase text-slate-400 mb-1 tracking-wider">Register As</label>
+            <select 
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer"
+            >
+              <option value="user">Normal User (Staff)</option>
+              <option value="admin">Administrator (Admin)</option>
+            </select>
           </div>
           <button 
             type="submit" 

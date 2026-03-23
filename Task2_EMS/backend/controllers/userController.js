@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 // Register/SignUp user
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -26,6 +26,7 @@ export const register = async (req, res) => {
       name,
       email,
       password,
+      role: role || 'user'
     });
 
     // Send token via cookie
@@ -95,6 +96,7 @@ export const googleLogin = async (req, res) => {
         name,
         email,
         password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
+        role: 'user'
       });
     }
 
