@@ -22,7 +22,18 @@ An industry-standard web application designed for administrators to manage emplo
 - **Security:** Password hashing and token-based session persistence.
 
 ## 📸 Screenshots
-*(Add your screenshots here after finishing the UI!)*
+## Admin Dashboard
+<img width="1732" height="892" alt="image" src="https://github.com/user-attachments/assets/65244603-532f-431f-84d0-efb4c243af20" />
+
+## User Dashboard
+<img width="1761" height="888" alt="image" src="https://github.com/user-attachments/assets/496a2af6-4bf1-4ee0-80cd-f1ef7f1b3689" />
+
+## Login Page
+<img width="1742" height="797" alt="image" src="https://github.com/user-attachments/assets/941a44fa-9448-4299-a5a0-8ce56e767b53" />
+
+## Signup Page
+<img width="1767" height="882" alt="image" src="https://github.com/user-attachments/assets/5be1d947-a1cc-4da5-93c3-14e7d4381acb" />
+
 
 ## 🛠️ Installation & Setup
 1. **Clone Repo:** `git clone https://github.com/your-username/ems-task-02.git`
