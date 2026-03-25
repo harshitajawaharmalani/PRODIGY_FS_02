@@ -4,6 +4,7 @@ import API from '../api/axios';
 const Dashboard = ({ setIsAuthenticated }) => {
   const [employees, setEmployees] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,16 +26,37 @@ const Dashboard = ({ setIsAuthenticated }) => {
     fetchEmployees();
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleEdit = (emp) => {
+    setIsEditing(emp._id); // Set the ID we are editing
+    setFormData({
+      firstName: emp.firstName,
+      lastName: emp.lastName,
+      email: emp.email,
+      position: emp.position,
+      salary: emp.salary
+    });
+    setShowModal(true);
+  };
+
+ const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.post('/employee/add', formData);
-      setShowModal(false); 
-      setFormData({ firstName: '', lastName: '', email: '', position: '', salary: '' }); // Reset form
-      fetchEmployees();    
-      alert("Employee added successfully!");
+      if (isEditing) {
+        // UPDATE Logic
+        await API.put(`/employee/update/${isEditing}`, formData);
+        alert("Employee updated successfully!");
+      } else {
+        // ADD Logic
+        await API.post('/employee/add', formData);
+        alert("Employee added successfully!");
+      }
+      
+      setShowModal(false);
+      setIsEditing(null); 
+      setFormData({ firstName: '', lastName: '', email: '', position: '', salary: '' });
+      fetchEmployees();
     } catch (err) {
-      alert("Error adding employee. Check if email is unique.");
+      alert(err.response?.data?.message || "Operation failed. Check if email is unique.");
     }
   };
 
@@ -68,7 +90,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
         </div>
         <div className="flex gap-4">
           <button 
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setIsEditing(null); 
+              setFormData({ firstName: '', lastName: '', email: '', position: '', salary: '' });
+              setShowModal(true)}}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-semibold transition-all shadow-lg shadow-blue-200"
           >
             + Add Employee
@@ -89,6 +114,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
             <tr>
               <th className="p-5 text-xs font-bold uppercase text-slate-400 tracking-wider">Employee Name</th>
               <th className="p-5 text-xs font-bold uppercase text-slate-400 tracking-wider">Position</th>
+              <th className="p-5 text-xs font-bold uppercase text-slate-400 tracking-wider">Salary</th>
               <th className="p-5 text-xs font-bold uppercase text-slate-400 tracking-wider">Email</th>
               <th className="p-5 text-xs font-bold uppercase text-slate-400 tracking-wider text-right">Actions</th>
             </tr>
@@ -102,7 +128,16 @@ const Dashboard = ({ setIsAuthenticated }) => {
                     <span className="bg-slate-100 px-3 py-1 rounded-full text-sm">{emp.position}</span>
                   </td>
                   <td className="p-5 text-slate-500">{emp.email}</td>
-                  <td className="p-5 text-right">
+                  {/* DISPLAY SALARY ADDED HERE */}
+                  <td className="p-5 text-slate-600 font-semibold">₹{emp.salary.toLocaleString()}</td>
+                  <td className="p-5 text-right flex justify-end gap-4">
+                    <button 
+                      onClick={() => handleEdit(emp)} 
+                      className="text-blue-600 font-bold hover:text-blue-800 transition-colors"
+                    >
+                      Edit
+                    </button>
+                    
                     <button 
                       onClick={() => handleDelete(emp._id)} 
                       className="text-red-500 font-bold hover:text-red-700 transition-colors"
@@ -125,32 +160,37 @@ const Dashboard = ({ setIsAuthenticated }) => {
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-200">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">New Employee</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">{isEditing ? "Edit Employee" : "New Employee"}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <input 
                   type="text" placeholder="First Name" required
+                  value={formData.firstName}
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   onChange={(e) => setFormData({...formData, firstName: e.target.value})}
                 />
                 <input 
                   type="text" placeholder="Last Name" required
+                  value={formData.lastName}
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   onChange={(e) => setFormData({...formData, lastName: e.target.value})}
                 />
               </div>
               <input 
                 type="email" placeholder="Email Address" required
+                value={formData.email}
                 className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
               />
               <input 
                 type="text" placeholder="Position (e.g. Developer)" required
+                value={formData.position}
                 className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                 onChange={(e) => setFormData({...formData, position: e.target.value})}
               />
               <input 
                 type="number" placeholder="Salary" required
+                value={formData.salary}
                 className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                 onChange={(e) => setFormData({...formData, salary: e.target.value})}
               />
@@ -159,7 +199,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
                   type="submit" 
                   className="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all"
                 >
-                  Save Record
+                  {isEditing ? "Update Record" : "Save Record"}
                 </button>
                 <button 
                   type="button" 
